@@ -1,0 +1,32 @@
+{
+  "name": "@welldone-software/node-toolbelt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/welldone-software/node-toolbelt.git"
+  },
+  "keywords": [],
+  "author": "Dani Kenan <dani@welldone-software.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/welldone-software/node-toolbelt/issues"
+  },
+  "homepage": "https://github.com/welldone-software/node-toolbelt#readme",
+  "dependencies": {
+    "device-detector": "^1.0.2",
+    "dotenv": "^4.0.0",
+    "express-pino-logger": "^3.0.1",
+    "lodash": "^4.17.4",
+    "pino": "^4.10.2",
+    "standard-http-error": "^2.0.1"
+  },
+  "devDependencies": {
+    "jest": "^22.0.3"
+  }
+}
