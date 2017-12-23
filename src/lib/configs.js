@@ -3,12 +3,14 @@ const dotevn = require('dotenv')
 
 dotevn.config()
 
+// const resolveEnvVars
+
 const mapEnv = defaults =>
-    mapValues(defaults, (val, key) => process.env[key] || val)
+  mapValues(defaults, (val, key) => process.env[key] || val)
 
 const assignEnv = defaults => Object.assign(defaults, mapEnv(defaults))
 
 module.exports = {
   mapEnv,
-  assignEnv
+  assignEnv,
 }
