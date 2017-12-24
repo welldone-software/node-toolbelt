@@ -13,7 +13,8 @@ class BaseError extends HttpError {
     const ctx =
       context ||
       (!baseError && baseErrorOrContext) ||
-      (!msg && !baseError && msgBaseErrorOrContext)
+      (!msg && !baseError && msgBaseErrorOrContext) ||
+      undefined
     super(code, msg, baseError)
     this.context = ctx
   }
