@@ -18,17 +18,13 @@ const errSerializer = err =>
 
 const logger = pino({
   serializers: {
-    err: errorSerializer,
-    error: errorSerializer,
+    err: errSerializer,
+    error: errSerializer,
   },
 })
 
 const expressLogger = expressPino({
   logger,
-  // serializers: {
-  //   err: errorSerializer,
-  //   error: errorSerializer,
-  // },
 })
 
 module.exports = {
