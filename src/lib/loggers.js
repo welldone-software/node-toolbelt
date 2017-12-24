@@ -1,11 +1,13 @@
 const pino = require('pino')
 const {assignWith} = require('lodash')
 const expressPino = require('express-pino-logger')
+const { IncomingMessage, ServerResponse } = require('http')
 
 const assignWithCustomizer = (objValue, srcValue) =>
     (objValue === undefined ? srcValue : objValue)
 
-const errSerializer = err =>
+const errSerializer = err => 
+  err instanceof Error ?
     assignWith(
         {
           type: err.constructor.name,
@@ -14,18 +16,22 @@ const errSerializer = err =>
         },
         err,
         assignWithCustomizer
-    )
+    ) : err
 
-const logger = pino({
-  serializers: {
-    err: errSerializer,
-    error: errSerializer,
-  },
-})
+const requestSerializer = req => 
+  (req && req.raw instanceof IncomingMessage) ? ({
+      ...pino.stdSerializers.req(req),
+      body: req.raw.body,
+    }) : req
 
-const expressLogger = expressPino({
-  logger,
-})
+const serializers = {
+  req: requestSerializer,
+  err: errSerializer,
+  error: errSerializer,
+}
+
+const logger = pino({serializers})
+const expressLogger = expressPino({logger, serializers})
 
 module.exports = {
   logger,
