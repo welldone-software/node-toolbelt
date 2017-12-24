@@ -24,7 +24,8 @@
     "express-pino-logger": "^3.0.1",
     "lodash": "^4.17.4",
     "pino": "^4.10.2",
-    "standard-http-error": "^2.0.1"
+    "standard-http-error": "^2.0.1",
+    "url-parse": "^1.2.0"
   },
   "devDependencies": {
     "jest": "^22.0.3"
