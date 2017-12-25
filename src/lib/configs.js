@@ -1,16 +1,13 @@
 const {mapValues} = require('lodash')
 const dotevn = require('dotenv')
 
-dotevn.config()
-
-// const resolveEnvVars
+const envConfig = dotevn.config()
 
 const mapEnv = defaults =>
-  mapValues(defaults, (val, key) => process.env[key] || val)
+  mapValues(envConfig.parsed, (val, key) => process.env[key] || defaults[key])
 
-const assignEnv = defaults => Object.assign(defaults, mapEnv(defaults))
+const assignEnv = defaults => Object.assign({}, defaults, mapEnv(defaults))
 
 module.exports = {
-  mapEnv,
   assignEnv,
 }

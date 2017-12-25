@@ -1,27 +1,44 @@
-const {mapEnv, assignEnv} = require('../src/lib/configs')
+const { assignEnv } = require('../src/lib/configs')
 
-const newObjectTest = () => {
+const newObjectTest = (fn) => {
   const a = {}
-  expect(mapEnv(a)).not.toBe(a)
-  expect(mapEnv(a) !== a).toBeTruthy()
+  expect(fn(a)).not.toBe(a)
+  expect(fn(a) !== a).toBeTruthy()
 }
 
-const replaceKeysTest =  () => {
-  const a = {}
-  expect(assignEnv(a)).toBe(a)
-  expect(assignEnv(a) === a).toBeTruthy()
+const replaceKeysTest =  (fn) => {
+  const a = {HELLO: 'world'}
+  process.env.HELLO = 'env'
+  expect(fn(a).HELLO).toEqual('env')
 }
 
-describe('mapEnv', () => {
+const addEnvValues =  (fn) => {
+  const a = {}
+  process.env.TEST = 'env'
+  expect(fn(a).TEST).toEqual('env')
+}
 
-  test('returns a new object', newObjectTest)
-  test('replace keys with env keys', replaceKeysTest)
-  
-})
+const addDotEnvValues =  (fn) => {
+  const a = {}
+  expect(fn(a).DOT_ENV).toEqual('.env')
+}
+
+const returnDefaultValues = (fn) =>{
+  const a = {key:'val'}
+  expect(fn(a).key).toEqual('val')
+}
+
+const dontAddAllEnvValues = (fn) =>{
+  const a = {key:'val'}
+  process.env.MORE_VALUE = 'env'
+  expect(fn(a).MORE_VALUE).toEqual(undefined)
+}
 
 describe('assignEnv', () => {
-
-  test('returns the same object', newObjectTest)
-  test('replace keys with env keys', replaceKeysTest)
-
+  test('returns the same object', ()=>newObjectTest(assignEnv))
+  test('replace keys with env keys', ()=>replaceKeysTest(assignEnv))
+  test('add enviorment values', ()=>addEnvValues(assignEnv))
+  test('add dotenv values', ()=>addDotEnvValues(assignEnv))
+  test('return default values', ()=>returnDefaultValues(assignEnv))
+  test('dont add all values from env', ()=>dontAddAllEnvValues(assignEnv))
 })
