@@ -71,7 +71,6 @@ const useManyParams = (error, httpErrorType)=>{
         name: error.name,
         code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
         context: context })
-    console.log(new error(baseError, context))
     expect(new error(baseError, context)).toEqual({
         message: httpErrorType,
         a: baseError.a,
