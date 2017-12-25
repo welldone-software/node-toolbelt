@@ -13,7 +13,8 @@ class BaseError extends HttpError {
     const ctx =
       context ||
       (!baseError && baseErrorOrContext) ||
-      (!msg && !baseError && msgBaseErrorOrContext)
+      (!msg && !baseError && msgBaseErrorOrContext) ||
+      undefined
     super(code, msg, baseError)
     this.context = ctx
   }
@@ -21,7 +22,7 @@ class BaseError extends HttpError {
 
 module.exports.NotFoundError = class NotFoundError extends BaseError {
   constructor(msg, baseErrorOrContext, context) {
-    super(HttpError.UNAUTHORIZED, msg, baseErrorOrContext, context)
+    super(HttpError.NOT_FOUND, msg, baseErrorOrContext, context)
   }
 }
 
