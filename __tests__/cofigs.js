@@ -1,4 +1,4 @@
-const { assignEnv } = require('../src/lib/configs')
+const { mapEnv, assignEnv } = require('../src/lib/configs')
 
 const newObjectTest = (fn) => {
   const a = {}
@@ -10,12 +10,6 @@ const replaceKeysTest =  (fn) => {
   const a = {HELLO: 'world'}
   process.env.HELLO = 'env'
   expect(fn(a).HELLO).toEqual('env')
-}
-
-const addEnvValues =  (fn) => {
-  const a = {}
-  process.env.TEST = 'env'
-  expect(fn(a).TEST).toEqual('env')
 }
 
 const addDotEnvValues =  (fn) => {
@@ -34,11 +28,24 @@ const dontAddAllEnvValues = (fn) =>{
   expect(fn(a).MORE_VALUE).toEqual(undefined)
 }
 
+describe('mapEnv', () => {
+  test('returns new object', ()=> {
+    const a = {}
+    expect(mapEnv(a)).not.toBe(a)
+    expect(mapEnv(a) !== a).toBeTruthy()
+  })
+  test('replace default keys with env keys', ()=>replaceKeysTest(mapEnv))
+  test('return default values', ()=>returnDefaultValues(mapEnv))
+  test('dont add env values not from defaults', ()=>dontAddAllEnvValues(mapEnv))
+})
+
 describe('assignEnv', () => {
-  test('returns the same object', ()=>newObjectTest(assignEnv))
-  test('replace keys with env keys', ()=>replaceKeysTest(assignEnv))
-  test('add enviorment values', ()=>addEnvValues(assignEnv))
-  test('add dotenv values', ()=>addDotEnvValues(assignEnv))
+  test('returns the same object', ()=> {
+    const a = {}
+    expect(assignEnv(a)).toBe(a)
+    expect(assignEnv(a) === a).toBeTruthy()
+  })
+  test('replace default keys with env keys', ()=>replaceKeysTest(assignEnv))
   test('return default values', ()=>returnDefaultValues(assignEnv))
-  test('dont add all values from env', ()=>dontAddAllEnvValues(assignEnv))
+  test('dont add env values not from defaults', ()=>dontAddAllEnvValues(assignEnv))
 })
