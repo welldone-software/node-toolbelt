@@ -29,7 +29,10 @@ const errorHandler = (err, req, res, next) => {
     500
   res.status(status).send({
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? undefined : (err.stack || '').replace(stackFileRegex, ''),
+    stack:
+      process.env.NODE_ENV === 'production'
+        ? undefined
+        : (err.stack || '').replace(stackFileRegex, ''),
   })
 }
 
@@ -44,7 +47,6 @@ const getRequestInfo = (req) => {
   const device = deviceDetector.parse(browser)
   return {ip, device, browser, headers}
 }
-
 
 module.exports = {
   createApiEndpoint,

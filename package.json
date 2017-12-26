@@ -6,6 +6,7 @@
   "private": false,
   "scripts": {
     "test": "jest",
+    "lint:fix": "prettier-eslint --write \"src/**/*.js\" && eslint src",
     "test:watch": "jest --watch"
   },
   "repository": {
