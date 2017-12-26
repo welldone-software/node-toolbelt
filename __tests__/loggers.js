@@ -1,5 +1,4 @@
 const {
-  _errSerializer,
   _parseBody,
   _requestSerializer,
   _removeDeep,
