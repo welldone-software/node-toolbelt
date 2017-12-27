@@ -80,13 +80,12 @@ const requestSerializer = (options = {}, req) => {
 }
 
 const getUseLevel = (res, err) => {
-  if (res.statusCode > 500) {
-    return 'error'
-  } else if (res.statusCode >= 400 && res.statusCode < 500) {
+  if (res.statusCode >= 400 && res.statusCode < 500) {
     return 'warn'
-  } else {
-    return 'info'
-  } 
+  } else if (res.statusCode >= 500 || err) {
+    return 'error'
+  }
+  return 'info'
 }
 
 const serializers = options => ({

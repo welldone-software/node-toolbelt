@@ -7,8 +7,7 @@
   "scripts": {
     "test": "jest",
     "lint:fix": "prettier-eslint --write \"src/**/*.js\" && eslint src",
-    "test:watch": "jest --watch",
-    "ci": "prettier-eslint --write \"src/**/*.js\" && eslint src && jest"
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
