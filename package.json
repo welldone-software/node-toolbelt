@@ -1,6 +1,6 @@
 {
   "name": "@welldone-software/node-toolbelt",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "src/index.js",
   "private": false,
