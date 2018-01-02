@@ -21,7 +21,6 @@ const createMiddleware = fn => (req, res, next) => {
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {
-  res.emit('error', err) // pino.js handle error log in this way
   const status =
     err.httpErrorCode ||
     err.status ||
@@ -34,6 +33,7 @@ const errorHandler = (err, req, res, next) => {
         ? undefined
         : (err.stack || '').replace(stackFileRegex, ''),
   })
+  res.emit('error', err) // pino.js handle error log in this way
 }
 
 const getBaseUrl = req =>

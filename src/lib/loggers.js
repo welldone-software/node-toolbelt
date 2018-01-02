@@ -1,6 +1,6 @@
 const pino = require('pino')
 const {assignWith, mapValues, map} = require('lodash')
-const expressPino = require('express-pino-logger')
+const expressPino = require('pino-http')
 const {IncomingMessage} = require('http')
 
 const assignWithCustomizer = (objValue, srcValue) =>
@@ -79,6 +79,15 @@ const requestSerializer = (options = {}, req) => {
     : req
 }
 
+const getUseLevel = (res, err) => {
+  if (res.statusCode >= 400 && res.statusCode < 500) {
+    return 'warn'
+  } else if (res.statusCode >= 500 || err) {
+    return 'error'
+  }
+  return 'info'
+}
+
 const serializers = options => ({
   req: requestSerializer.bind(null, options),
   err: errSerializer,
@@ -87,7 +96,7 @@ const serializers = options => ({
 
 const logger = pino({serializers: serializers()})
 const expressLogger = options =>
-  expressPino({logger, serializers: serializers(options)})
+  expressPino({logger, serializers: serializers(options), getUseLevel})
 
 module.exports = {
   logger,
