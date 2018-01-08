@@ -21,44 +21,54 @@ class BaseError extends HttpError {
   }
 }
 
-module.exports.NotFoundError = class NotFoundError extends BaseError {
+class NotFoundError extends BaseError {
   constructor(msg, baseErrorOrContext, context) {
     super(HttpError.NOT_FOUND, msg, baseErrorOrContext, context)
   }
 }
 
-module.exports.AlreadyExistsError = class AlreadyExistsError extends BaseError {
+class AlreadyExistsError extends BaseError {
   constructor(msg, baseErrorOrContext, context) {
     super(HttpError.CONFLICT, msg, baseErrorOrContext, context)
   }
 }
 
-module.exports.InvalidArgumentError = class InvalidArgumentError extends BaseError {
+class InvalidArgumentError extends BaseError {
   constructor(msg, baseErrorOrContext, context) {
     super(HttpError.BAD_REQUEST, msg, baseErrorOrContext, context)
   }
 }
 
-module.exports.InvalidStateError = class InvalidStateError extends BaseError {
+class InvalidStateError extends BaseError {
   constructor(msg, baseErrorOrContext, context) {
     super(HttpError.BAD_REQUEST, msg, baseErrorOrContext, context)
   }
 }
 
-module.exports.AuthenticationError = class AuthenticationError extends BaseError {
+class AuthenticationError extends BaseError {
   constructor(msg, baseErrorOrContext, context) {
     super(HttpError.UNAUTHORIZED, msg, baseErrorOrContext, context)
   }
 }
 
-module.exports.AuthorizationError = class AuthorizationError extends BaseError {
+class AuthorizationError extends BaseError {
   constructor(msg, baseErrorOrContext, context) {
     super(HttpError.UNAUTHORIZED, msg, baseErrorOrContext, context)
   }
 }
 
-module.exports.UnexpectedError = class UnexpectedError extends BaseError {
+class UnexpectedError extends BaseError {
   constructor(msg, baseErrorOrContext, context) {
     super(HttpError.INTERNAL_SERVER_ERROR, msg, baseErrorOrContext, context)
   }
+}
+
+module.exports = {
+  NotFoundError,
+  AlreadyExistsError,
+  InvalidArgumentError,
+  InvalidStateError,
+  AuthenticationError,
+  AuthorizationError,
+  UnexpectedError,
 }

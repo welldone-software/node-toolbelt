@@ -25,19 +25,18 @@ const removeDeep = (obj, keys) => {
     if (keys.indexOf(k) === -1) {
       return typeof v === 'object' ? removeDeep(v, keys) : v
     }
+    return undefined
   })
 }
 
 const parseBody = (req, options) => {
-  let body
-
   const contetType = req.headers['content-type']
   const useBody =
     contetType &&
     /application\/json|application\/x-www-form-urlencoded/i.test(contetType)
 
   if (useBody && req.raw.body) {
-    body = req.raw.body
+    let {body} = req.raw
 
     if (options.removeSensitiveFields) {
       body = removeDeep(body, options.sensitiveFields)
@@ -49,8 +48,10 @@ const parseBody = (req, options) => {
       }
       body = `${body.slice(0, options.maxBodySize - 3)}...`
     }
+    return body
   }
-  return body
+
+  return undefined
 }
 
 const parseHeaders = (headers, opts) =>

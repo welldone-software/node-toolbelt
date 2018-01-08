@@ -1,6 +1,11 @@
+const exceptions = require('./lib/exceptions')
+const expressHelpers = require('./lib/expressHelpers')
+const loggers = require('./lib/loggers')
+const configs = require('./lib/configs')
+
 module.exports = {
-  exceptions: require('./lib/exceptions'),
-  expressHelpers: require('./lib/expressHelpers'),
-  loggers: require('./lib/loggers'),
-  configs: require('./lib/configs'),
+  exceptions,
+  expressHelpers,
+  loggers,
+  configs,
 }
