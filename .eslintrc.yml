@@ -10,7 +10,7 @@ env:
 rules:
   max-len: [error, 80]
   semi: [error, never]
-  linebreak-style: [error, windows]
+  linebreak-style: off
   comma-dangle: [error, always-multiline]
   quotes: [error, single]
   no-plusplus: off
