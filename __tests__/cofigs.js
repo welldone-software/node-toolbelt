@@ -1,3 +1,4 @@
+/* eslint no-undef: warn */
 const {mapEnv} = require('../src/lib/configs')
 
 describe('mapEnv', () => {
