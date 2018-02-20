@@ -89,7 +89,6 @@ describe('secureMiddlware', () => {
       const middlware = secureMiddlware({shouldBeVerified: false, findUser, roles: ['coolman']})
       const req = {jwt: {userId: '123'}}
       middlware(req, {}, (err) => {
-        console.warn(err)
         expect(err).toEqual({
           message: 'User not autherize to role',
           name: 'AuthorizationError',
