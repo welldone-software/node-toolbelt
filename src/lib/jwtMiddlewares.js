@@ -11,14 +11,14 @@ const expressJwt = require('express-jwt')
 const generateToken = (jwtSecret, payload, expiresIn) =>
   jsonWebToken.sign(payload, jwtSecret, {expiresIn})
 
-const jwtMiddlware = jwtSecret =>
+const jwtRequest = jwtSecret =>
   expressJwt({
     secret: jwtSecret,
     userProperty: 'jwt',
     credentialsRequired: false,
   })
 
-const secureMiddlware = (options = {}) => {
+const jwtSecure = (options = {}) => {
   const defaultOptions = {
     shouldBeVerified: true,
     findUser: undefined,
@@ -56,7 +56,7 @@ const secureMiddlware = (options = {}) => {
 }
 
 module.exports = {
-  jwtMiddlware,
-  secureMiddlware,
+  jwtRequest,
+  jwtSecure,
   generateToken,
 }

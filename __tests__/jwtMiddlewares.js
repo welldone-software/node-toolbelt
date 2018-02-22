@@ -1,9 +1,7 @@
 /* eslint no-undef: warn */
-const {
-  secureMiddlware,
-} = require('../src/lib/expressJwt')
+const {jwtSecure} = require('../src/lib/jwtMiddlewares')
 
-describe('secureMiddlware', () => {
+describe('jwtSecure', () => {
   const authError = {
     message: 'jwt token not valid',
     name: 'AuthenticationError',
@@ -12,7 +10,7 @@ describe('secureMiddlware', () => {
   }
   test('no jwt', () =>
     new Promise((resolve) => {
-      const middlware = secureMiddlware()
+      const middlware = jwtSecure()
       middlware({}, {}, (err) => {
         expect(err).toEqual(authError)
         resolve()
@@ -21,7 +19,7 @@ describe('secureMiddlware', () => {
 
   test('no user id', () =>
     new Promise((resolve) => {
-      const middlware = secureMiddlware()
+      const middlware = jwtSecure()
       middlware({jwt: {verified: true}}, {}, (err) => {
         expect(err).toEqual(Object.assign({}, authError, {context: {jwt: {verified: true}}}))
         resolve()
@@ -30,7 +28,7 @@ describe('secureMiddlware', () => {
 
   test('no verified and shouldBeVerified', () =>
     new Promise((resolve) => {
-      const middlware = secureMiddlware()
+      const middlware = jwtSecure()
       middlware({jwt: {userId: '123'}}, {}, (err) => {
         expect(err).toEqual(Object.assign({}, authError, {context: {jwt: {userId: '123'}}}))
         resolve()
@@ -39,7 +37,7 @@ describe('secureMiddlware', () => {
 
   test('verified shouldBeVerified', () =>
     new Promise((resolve) => {
-      const middlware = secureMiddlware()
+      const middlware = jwtSecure()
       middlware({jwt: {verified: true, userId: '123'}}, {}, (err) => {
         expect(err).toEqual(undefined)
         resolve()
@@ -48,7 +46,7 @@ describe('secureMiddlware', () => {
 
   test('not verified should not be verified', () =>
     new Promise((resolve) => {
-      const middlware = secureMiddlware({shouldBeVerified: false})
+      const middlware = jwtSecure({shouldBeVerified: false})
       middlware({jwt: {userId: '123'}}, {}, (err) => {
         expect(err).toEqual(undefined)
         resolve()
@@ -57,7 +55,7 @@ describe('secureMiddlware', () => {
 
   test('not verified should not be verified', () =>
     new Promise((resolve) => {
-      const middlware = secureMiddlware({shouldBeVerified: false})
+      const middlware = jwtSecure({shouldBeVerified: false})
       middlware({jwt: {userId: '123'}}, {}, (err) => {
         expect(err).toEqual(undefined)
         resolve()
@@ -66,7 +64,7 @@ describe('secureMiddlware', () => {
   test('find user', () =>
     new Promise((resolve) => {
       const findUser = ({id}) => ({dataValues: {id, name: 'Adam'}})
-      const middlware = secureMiddlware({shouldBeVerified: false, findUser, shouldAddUserToRequest: true})
+      const middlware = jwtSecure({shouldBeVerified: false, findUser, shouldAddUserToRequest: true})
       const req = {jwt: {userId: '123'}}
       middlware(req, {}, () => {
         expect(req).toEqual({jwt: {userId: '123'}, userData: {id: '123', name: 'Adam'}})
@@ -76,7 +74,7 @@ describe('secureMiddlware', () => {
   test('user with roles', () =>
     new Promise((resolve) => {
       const findUser = () => ({roles: ['user', 'coolman']})
-      const middlware = secureMiddlware({shouldBeVerified: false, findUser, roles: ['coolman']})
+      const middlware = jwtSecure({shouldBeVerified: false, findUser, roles: ['coolman']})
       const req = {jwt: {userId: '123'}}
       middlware(req, {}, () => {
         expect(req).toEqual({jwt: {userId: '123'}})
@@ -86,7 +84,7 @@ describe('secureMiddlware', () => {
   test('user without roles', () =>
     new Promise((resolve) => {
       const findUser = () => ({roles: ['user']})
-      const middlware = secureMiddlware({shouldBeVerified: false, findUser, roles: ['coolman']})
+      const middlware = jwtSecure({shouldBeVerified: false, findUser, roles: ['coolman']})
       const req = {jwt: {userId: '123'}}
       middlware(req, {}, (err) => {
         expect(err).toEqual({
