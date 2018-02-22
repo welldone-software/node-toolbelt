@@ -18,13 +18,14 @@ const jwtRequest = jwtSecret =>
     credentialsRequired: false,
   })
 
-const jwtSecure = (options = {}) => {
-  const defaultOptions = {
-    shouldBeVerified: true,
-    findUser: undefined,
-    shouldAddUserToRequest: false,
-    roles: [],
-  }
+const defaultOptions = {
+  shouldBeVerified: true,
+  findUser: undefined,
+  shouldAddUserToRequest: false,
+  roles: [],
+}
+
+const jwtSecure = (options = defaultOptions) => {
   const opts = {...defaultOptions, ...options}
   return createMiddleware(async (req) => {
     const {jwt} = req
