@@ -1,5 +1,49 @@
 /* eslint no-undef: warn */
-const {jwtSecure} = require('../src/lib/jwtMiddlewares')
+const {randomBytes} = require('crypto')
+const {jwtSecure, generateToken, jwtRequest, verify} = require('../src/lib/jwt')
+
+const secret = randomBytes(16).toString()
+
+describe('generate and verify', () => {
+  test('base test', () => {
+    const payload = {id: '123', name: '456'}
+    const token = generateToken(secret, payload, 1)
+    const res = verify(token, secret)
+    delete res.iat
+    delete res.exp
+    expect(res).toEqual(payload)
+  })
+
+  test('failed on wrong secret', () => {
+    const payload = {id: '123', name: '456'}
+    const token = generateToken(secret, payload, 1)
+    const failedCall = verify.bind(null, token, randomBytes(16).toString())
+    expect(failedCall).toThrowError('invalid signature')
+  })
+  test('failed on expired', async () => {
+    const payload = {id: '123', name: '456'}
+    const token = generateToken(secret, payload, 1)
+    const failedCall = verify.bind(null, token, secret)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    expect(failedCall).toThrowError('jwt expired')
+  })
+})
+
+describe('jwtRequest', () => {
+  test('base test', () => {
+    const payload = {id: '123', values: {name: 'adam'}}
+    const token = generateToken(secret, payload, 1)
+    return new Promise((resolve) => {
+      const req = {headers: {authorization: `Bearer ${token}`}}
+      jwtRequest(secret)(req, {}, () => {
+        delete req.jwt.iat
+        delete req.jwt.exp
+        expect(req.jwt).toEqual(payload)
+        resolve()
+      })
+    })
+  })
+})
 
 describe('jwtSecure', () => {
   const authError = {

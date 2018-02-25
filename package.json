@@ -43,6 +43,16 @@
     "prettier-eslint": "^8.6.2",
     "prettier-eslint-cli": "^4.4.0"
   },
+  "jest" : {
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100,
+        "statements": 100
+      }
+    }
+  },
   "pre-commit": [
     "precommit"
   ]

@@ -8,6 +8,8 @@ const {
 } = require('./exceptions')
 const expressJwt = require('express-jwt')
 
+const verify = (token, jwtSecret) => jsonWebToken.verify(token, jwtSecret)
+
 const generateToken = (jwtSecret, payload, expiresIn) =>
   jsonWebToken.sign(payload, jwtSecret, {expiresIn})
 
@@ -60,4 +62,5 @@ module.exports = {
   jwtRequest,
   jwtSecure,
   generateToken,
+  verify,
 }
