@@ -1,4 +1,3 @@
-/* eslint no-undef: warn */
 const {
   _parseBody,
   _requestSerializer,

@@ -1,4 +1,3 @@
-/* eslint no-undef: warn */
 const {createApiEndpoint} = require('../src/lib/expressHelpers')
 
 const res = {

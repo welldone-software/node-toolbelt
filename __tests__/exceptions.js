@@ -1,4 +1,3 @@
-/* eslint no-undef: warn */
 const HttpError = require('standard-http-error')
 const _ = require('lodash')
 const {
@@ -11,46 +10,31 @@ const {
   UnexpectedError,
 } = require('../src/lib/exceptions')
 
-const initDefaultValues = (ErrorType, httpErrorType) => {
-  expect(new ErrorType()).toEqual({
-    message: httpErrorType,
-    name: ErrorType.name,
+const expectEqual = (error, httpErrorType, name, context, message = httpErrorType, moreKeys = {}) =>
+  expect(error).toEqual(Object.assign(moreKeys, {
+    message,
+    name,
     code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: undefined,
-  })
-}
+    context,
+  }))
 
-const useMessage = (ErrorType, httpErrorType) => {
-  const msg = 'some text'
-  expect(new ErrorType(msg)).toEqual({
-    message: msg,
-    name: ErrorType.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: undefined,
-  })
-}
+const initDefaultValues = (ErrorType, httpErrorType) =>
+  expectEqual(new ErrorType(), httpErrorType, ErrorType.name)
 
-const useContext = (ErrorType, httpErrorType) => {
-  const ctx = {data: 'some data'}
-  expect(new ErrorType(ctx)).toEqual({
-    message: httpErrorType,
-    name: ErrorType.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: ctx,
-  })
-}
+const useMessage = (ErrorType, httpErrorType, msg = 'some text') =>
+  expectEqual(new ErrorType(msg), httpErrorType, ErrorType.name, undefined, msg)
+
+const useContext = (ErrorType, httpErrorType, ctx = {data: 'some data'}) =>
+  expectEqual(new ErrorType(ctx), httpErrorType, ErrorType.name, ctx)
 
 const useError = (ErrorType, httpErrorType) => {
   const baseError = new Error('oh no!')
   baseError.a = '123'
   baseError.message = 'oh my!'
-  expect(new ErrorType(baseError)).toEqual({
-    message: httpErrorType,
-    a: baseError.a,
-    name: ErrorType.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: undefined,
-  })
+  expectEqual(
+    new ErrorType(baseError), httpErrorType, ErrorType.name,
+    undefined, httpErrorType, {a: baseError.a}
+  )
 }
 
 const useManyParams = (ErrorType, httpErrorType) => {
@@ -59,33 +43,19 @@ const useManyParams = (ErrorType, httpErrorType) => {
   baseError.message = 'oh my!'
   const context = {some: 'data'}
   const msg = 'oops!'
-  expect(new ErrorType(msg, baseError, context)).toEqual({
-    message: msg,
-    a: baseError.a,
-    name: ErrorType.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context,
-  })
-  expect(new ErrorType(msg, baseError)).toEqual({
-    message: msg,
-    name: ErrorType.name,
-    a: baseError.a,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: undefined,
-  })
-  expect(new ErrorType(msg, context)).toEqual({
-    message: msg,
-    name: ErrorType.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context,
-  })
-  expect(new ErrorType(baseError, context)).toEqual({
-    message: httpErrorType,
-    a: baseError.a,
-    name: ErrorType.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context,
-  })
+  expectEqual(
+    new ErrorType(msg, baseError, context), httpErrorType, ErrorType.name,
+    context, msg, {a: baseError.a}
+  )
+  expectEqual(
+    new ErrorType(msg, baseError), httpErrorType, ErrorType.name,
+    undefined, msg, {a: baseError.a}
+  )
+  expectEqual(new ErrorType(msg, context), httpErrorType, ErrorType.name, context, msg)
+  expectEqual(
+    new ErrorType(baseError, context), httpErrorType, ErrorType.name,
+    context, httpErrorType, {a: baseError.a}
+  )
 }
 
 const exceptions = [

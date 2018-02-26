@@ -1,12 +1,11 @@
-/* eslint no-undef: warn */
 const {randomBytes} = require('crypto')
 const {jwtSecure, generateToken, jwtRequest, verify} = require('../src/lib/jwt')
 
 const secret = randomBytes(16).toString()
 
 describe('generate and verify', () => {
+  const payload = {id: '123', name: '456'}
   test('base test', () => {
-    const payload = {id: '123', name: '456'}
     const token = generateToken(secret, payload, 1)
     const res = verify(token, secret)
     delete res.iat
@@ -15,13 +14,11 @@ describe('generate and verify', () => {
   })
 
   test('failed on wrong secret', () => {
-    const payload = {id: '123', name: '456'}
     const token = generateToken(secret, payload, 1)
     const failedCall = verify.bind(null, token, randomBytes(16).toString())
     expect(failedCall).toThrowError('invalid signature')
   })
   test('failed on expired', async () => {
-    const payload = {id: '123', name: '456'}
     const token = generateToken(secret, payload, 1)
     const failedCall = verify.bind(null, token, secret)
     await new Promise(resolve => setTimeout(resolve, 2000))
@@ -83,7 +80,7 @@ describe('jwtSecure', () => {
     new Promise((resolve) => {
       const middlware = jwtSecure()
       middlware({jwt: {verified: true, userId: '123'}}, {}, (err) => {
-        expect(err).toEqual(undefined)
+        expect(err).toBeUndefined()
         resolve()
       })
     }))
@@ -92,19 +89,11 @@ describe('jwtSecure', () => {
     new Promise((resolve) => {
       const middlware = jwtSecure({shouldBeVerified: false})
       middlware({jwt: {userId: '123'}}, {}, (err) => {
-        expect(err).toEqual(undefined)
+        expect(err).toBeUndefined()
         resolve()
       })
     }))
 
-  test('not verified should not be verified', () =>
-    new Promise((resolve) => {
-      const middlware = jwtSecure({shouldBeVerified: false})
-      middlware({jwt: {userId: '123'}}, {}, (err) => {
-        expect(err).toEqual(undefined)
-        resolve()
-      })
-    }))
   test('find user', () =>
     new Promise((resolve) => {
       const findUser = ({id}) => ({dataValues: {id, name: 'Adam'}})
@@ -135,7 +124,7 @@ describe('jwtSecure', () => {
           message: 'User not autherize to role',
           name: 'AuthorizationError',
           code: 401,
-          context: {userId: '123', roles: ['coolman' ]},
+          context: {userId: '123', roles: ['coolman']},
         })
         resolve()
       })
