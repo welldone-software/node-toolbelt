@@ -10,81 +10,52 @@ const {
   UnexpectedError,
 } = require('../src/lib/exceptions')
 
-const initDefaultValues = (error, httpErrorType) => {
-  expect(new error()).toEqual({
-    message: httpErrorType,
-    name: error.name,
+const expectEqual = (error, httpErrorType, name, context, message = httpErrorType, moreKeys = {}) =>
+  expect(error).toEqual(Object.assign(moreKeys, {
+    message,
+    name,
     code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: undefined,
-  })
-}
+    context,
+  }))
 
-const useMessage = (error, httpErrorType) => {
-  const msg = 'some text'
-  expect(new error(msg)).toEqual({
-    message: msg,
-    name: error.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: undefined,
-  })
-}
+const initDefaultValues = (ErrorType, httpErrorType) =>
+  expectEqual(new ErrorType(), httpErrorType, ErrorType.name)
 
-const useContext = (error, httpErrorType) => {
-  const ctx = {data: 'some data'}
-  expect(new error(ctx)).toEqual({
-    message: httpErrorType,
-    name: error.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: ctx,
-  })
-}
+const useMessage = (ErrorType, httpErrorType, msg = 'some text') =>
+  expectEqual(new ErrorType(msg), httpErrorType, ErrorType.name, undefined, msg)
 
-const useError = (error, httpErrorType) => {
+const useContext = (ErrorType, httpErrorType, ctx = {data: 'some data'}) =>
+  expectEqual(new ErrorType(ctx), httpErrorType, ErrorType.name, ctx)
+
+const useError = (ErrorType, httpErrorType) => {
   const baseError = new Error('oh no!')
   baseError.a = '123'
   baseError.message = 'oh my!'
-  expect(new error(baseError)).toEqual({
-    message: httpErrorType,
-    a: baseError.a,
-    name: error.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: undefined,
-  })
+  expectEqual(
+    new ErrorType(baseError), httpErrorType, ErrorType.name,
+    undefined, httpErrorType, {a: baseError.a}
+  )
 }
 
-const useManyParams = (error, httpErrorType) => {
+const useManyParams = (ErrorType, httpErrorType) => {
   const baseError = new Error('oh no!')
   baseError.a = '123'
   baseError.message = 'oh my!'
   const context = {some: 'data'}
   const msg = 'oops!'
-  expect(new error(msg, baseError, context)).toEqual({
-    message: msg,
-    a: baseError.a,
-    name: error.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context,
-  })
-  expect(new error(msg, baseError)).toEqual({
-    message: msg,
-    name: error.name,
-    a: baseError.a,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context: undefined,
-  })
-  expect(new error(msg, context)).toEqual({
-    message: msg,
-    name: error.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context,
-  })
-  expect(new error(baseError, context)).toEqual({
-    message: httpErrorType,
-    a: baseError.a,
-    name: error.name,
-    code: HttpError[_.snakeCase(httpErrorType).toUpperCase()],
-    context,
-  })
+  expectEqual(
+    new ErrorType(msg, baseError, context), httpErrorType, ErrorType.name,
+    context, msg, {a: baseError.a}
+  )
+  expectEqual(
+    new ErrorType(msg, baseError), httpErrorType, ErrorType.name,
+    undefined, msg, {a: baseError.a}
+  )
+  expectEqual(new ErrorType(msg, context), httpErrorType, ErrorType.name, context, msg)
+  expectEqual(
+    new ErrorType(baseError, context), httpErrorType, ErrorType.name,
+    context, httpErrorType, {a: baseError.a}
+  )
 }
 
 const exceptions = [
@@ -96,7 +67,8 @@ const exceptions = [
   {exceptionType: NotFoundError, httpErrorType: 'Not Found'},
   {exceptionType: UnexpectedError, httpErrorType: 'Internal Server Error'},
 ]
-for (const {exceptionType, httpErrorType} of exceptions) {
+
+exceptions.forEach(({exceptionType, httpErrorType}) => {
   describe(exceptionType.name, () => {
     test('has correct default values', () =>
       initDefaultValues(exceptionType, httpErrorType))
@@ -106,4 +78,4 @@ for (const {exceptionType, httpErrorType} of exceptions) {
     test('use many ctor parameters', () =>
       useManyParams(exceptionType, httpErrorType))
   })
-}
+})

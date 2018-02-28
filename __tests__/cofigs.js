@@ -33,13 +33,15 @@ describe('mapEnv', () => {
       c: {textAndText: 'abc', f: [1, 23, {r: 'q'}, {m: {t: 1}}]},
       d: {f: {g: 1}, y: 2},
     }
-    process.env.SOME_TEXT = '123'
-    process.env.C__TEXT_AND_TEXT = '456'
-    process.env.D__F__G = '789'
-    process.env.C__F__0 = 'arrays'
-    process.env.C__F__3__M__T = 'arrays&objects'
-    process.env.A = 'replace object'
-    process.env.B = 'replace array'
+    Object.assign(process.env, {
+      SOME_TEXT: '123',
+      C__TEXT_AND_TEXT: '456',
+      D__F__G: '789',
+      C__F__0: 'arrays',
+      C__F__3__M__T: 'arrays&objects',
+      A: 'replace object',
+      B: 'replace array',
+    })
     expect(mapEnv(a)).toEqual({
       a: 'replace object',
       b: 'replace array',
