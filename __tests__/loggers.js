@@ -47,6 +47,9 @@ describe('parseBody', () => {
     const body = {
       password: 'my secret password',
       user: 'John Doe',
+      array: [{
+        password: 'my secret password',
+      }],
     }
     const req = {
       headers: {
@@ -55,7 +58,7 @@ describe('parseBody', () => {
       raw: {body},
     }
     const result = _parseBody(req, loggerOptions)
-    expect(result).toEqual({user: 'John Doe'})
+    expect(result).toEqual({user: 'John Doe', array: [{}]})
   })
   test('no body', () => {
     const req = {

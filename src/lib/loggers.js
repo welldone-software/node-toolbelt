@@ -6,8 +6,18 @@ const {IncomingMessage} = require('http')
 const assignWithCustomizer = (objValue, srcValue) =>
   (objValue === undefined ? srcValue : objValue)
 
-const errSerializer = err =>
-  (err instanceof Error
+const removeDeep = (obj, keys) => {
+  const fn = obj instanceof Array ? map : mapValues
+  return fn(obj, (v, k) => {
+    if (keys.indexOf(k) === -1) {
+      return typeof v === 'object' ? removeDeep(v, keys) : v
+    }
+    return undefined
+  })
+}
+
+const errSerializer = (options = {}, err) => {
+  let error = err instanceof Error
     ? assignWith(
       {
         type: err.constructor.name,
@@ -17,16 +27,11 @@ const errSerializer = err =>
       err,
       assignWithCustomizer
     )
-    : err)
-
-const removeDeep = (obj, keys) => {
-  const fn = obj instanceof Array ? map : mapValues
-  return fn(obj, (v, k) => {
-    if (keys.indexOf(k) === -1) {
-      return typeof v === 'object' ? removeDeep(v, keys) : v
-    }
-    return undefined
-  })
+    : err
+  if (options.removeSensitiveFields) {
+    error = removeDeep(error, options.sensitiveFields)
+  }
+  return error
 }
 
 const parseBody = (req, options) => {
@@ -91,8 +96,8 @@ const getUseLevel = (res, err) => {
 
 const serializers = options => ({
   req: requestSerializer.bind(null, options),
-  err: errSerializer,
-  error: errSerializer,
+  err: errSerializer.bind(null, options),
+  error: errSerializer.bind(null, options),
 })
 
 const logger = pino({serializers: serializers()})
