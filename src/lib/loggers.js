@@ -17,17 +17,18 @@ const removeDeep = (obj, keys) => {
 }
 
 const errSerializer = (options = {}, err) => {
-  let error = err instanceof Error
-    ? assignWith(
-      {
-        type: err.constructor.name,
-        message: err.message,
-        stack: err.stack,
-      },
-      err,
-      assignWithCustomizer
-    )
-    : err
+  let error =
+    err instanceof Error
+      ? assignWith(
+        {
+          type: err.constructor.name,
+          message: err.message,
+          stack: err.stack,
+        },
+        err,
+        assignWithCustomizer
+      )
+      : err
   if (options.removeSensitiveFields) {
     error = removeDeep(error, options.sensitiveFields)
   }
