@@ -48,10 +48,10 @@ const jwtSecure = (options = defaultOptions) => {
       if (opts.roles.length) {
         const isAutherized = opts.roles.every(role => user.roles.includes(role))
         if (!isAutherized) {
-          throw new AuthorizationError(
-            'User not autherize to role',
-            {userId: jwt.userId, roles: opts.roles}
-          )
+          throw new AuthorizationError('User not autherize to role', {
+            userId: jwt.userId,
+            roles: opts.roles,
+          })
         }
       }
     }

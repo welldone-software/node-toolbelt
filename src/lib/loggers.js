@@ -6,19 +6,6 @@ const {IncomingMessage} = require('http')
 const assignWithCustomizer = (objValue, srcValue) =>
   (objValue === undefined ? srcValue : objValue)
 
-const errSerializer = err =>
-  (err instanceof Error
-    ? assignWith(
-      {
-        type: err.constructor.name,
-        message: err.message,
-        stack: err.stack,
-      },
-      err,
-      assignWithCustomizer
-    )
-    : err)
-
 const removeDeep = (obj, keys) => {
   const fn = obj instanceof Array ? map : mapValues
   return fn(obj, (v, k) => {
@@ -27,6 +14,26 @@ const removeDeep = (obj, keys) => {
     }
     return undefined
   })
+}
+
+const errSerializer = (options = {}, err) => {
+  let error =
+    err instanceof Error
+      ? assignWith(
+        {
+          type: err.constructor.name,
+          message: err.message,
+          stack: err.stack,
+        },
+        err,
+        assignWithCustomizer
+      )
+      : err
+  if (options.removeSensitiveFields) {
+    error = JSON.parse(JSON.stringify(error)) // Remove raw values
+    error = removeDeep(error, options.sensitiveFields)
+  }
+  return error
 }
 
 const parseBody = (req, options) => {
@@ -59,26 +66,17 @@ const parseHeaders = (headers, opts) =>
     ? removeDeep(headers, opts.sensitiveHeaders)
     : headers)
 
-const requestSerializer = (options = {}, req) => {
-  const defaultOptions = {
-    maxBodySize: 1024,
-    removeSensitiveFields: true,
-    sensitiveHeaders: ['authorization', 'proxy-authorization'],
-    sensitiveFields: ['password'],
-  }
-  const opts = {...defaultOptions, ...options}
-
-  return req && req.raw instanceof IncomingMessage
+const requestSerializer = (options = {}, req) =>
+  (req && req.raw instanceof IncomingMessage
     ? assignWith(
       {
-        body: parseBody(req, opts),
-        headers: parseHeaders(req.headers, opts),
+        body: parseBody(req, options),
+        headers: parseHeaders(req.headers, options),
       },
       req,
       assignWithCustomizer
     )
-    : req
-}
+    : req)
 
 const getUseLevel = (res, err) => {
   if (res.statusCode >= 400 && res.statusCode < 500) {
@@ -89,11 +87,21 @@ const getUseLevel = (res, err) => {
   return 'info'
 }
 
-const serializers = options => ({
-  req: requestSerializer.bind(null, options),
-  err: errSerializer,
-  error: errSerializer,
-})
+const serializers = (options = {}) => {
+  const defaultOptions = {
+    maxBodySize: 1024,
+    removeSensitiveFields: true,
+    sensitiveHeaders: ['authorization', 'proxy-authorization'],
+    sensitiveFields: ['password'],
+  }
+  const opts = {...defaultOptions, ...options}
+
+  return ({
+    req: requestSerializer.bind(null, opts),
+    err: errSerializer.bind(null, opts),
+    error: errSerializer.bind(null, opts),
+  })
+}
 
 const logger = pino({serializers: serializers()})
 const expressLogger = options =>
