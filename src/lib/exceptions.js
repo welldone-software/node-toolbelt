@@ -71,4 +71,5 @@ module.exports = {
   AuthenticationError,
   AuthorizationError,
   UnexpectedError,
+  BaseError,
 }

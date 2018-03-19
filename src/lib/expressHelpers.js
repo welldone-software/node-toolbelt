@@ -19,8 +19,7 @@ const createMiddleware = fn => (req, res, next) => {
     .catch(error => next(error))
 }
 
-// eslint-disable-next-line no-unused-vars
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res) => {
   const status =
     err.httpErrorCode ||
     err.status ||
