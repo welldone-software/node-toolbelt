@@ -1,4 +1,4 @@
-const {mapValues, map, snakeCase} = require('lodash')
+const {mapValues, map, snakeCase, merge} = require('lodash')
 const dotevn = require('dotenv')
 
 dotevn.config()
@@ -15,6 +15,13 @@ const mapEnv = (obj, basePath = '') => {
   })
 }
 
+const getEnvKeys = (obj, basePath = '') => Object.keys(mapEnv(obj, basePath))
+
+const mergeEnv = (obj, basePath = '') => merge(obj, mapEnv(obj, basePath))
+
+
 module.exports = {
   mapEnv,
+  mergeEnv,
+  getEnvKeys,
 }
