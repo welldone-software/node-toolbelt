@@ -1,9 +1,10 @@
+const {IncomingMessage} = require('http')
+const stringify = require('json-stringify-safe')
 const {
   _parseBody,
   _requestSerializer,
   _removeDeep,
 } = require('../src/lib/loggers')
-const {IncomingMessage} = require('http')
 
 const loggerOptions = {
   removeSensitiveFields: true,
@@ -82,7 +83,7 @@ describe('parseBody', () => {
     const body = {
       blaBla: 'so long bla bla text',
     }
-    const bodyString = JSON.stringify(body)
+    const bodyString = stringify(body)
     const req = {
       headers: {
         'content-type': 'application/json',

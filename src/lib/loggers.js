@@ -2,6 +2,7 @@ const pino = require('pino')
 const {assignWith, mapValues, map} = require('lodash')
 const expressPino = require('pino-http')
 const {IncomingMessage} = require('http')
+const stringify = require('json-stringify-safe')
 
 const assignWithCustomizer = (objValue, srcValue) =>
   (objValue === undefined ? srcValue : objValue)
@@ -30,7 +31,7 @@ const errSerializer = (options = {}, err) => {
       )
       : err
   if (options.removeSensitiveFields) {
-    error = JSON.parse(JSON.stringify(error)) // Remove raw values
+    error = JSON.parse(stringify(error)) // Remove raw values
     error = removeDeep(error, options.sensitiveFields)
   }
   return error
@@ -51,7 +52,7 @@ const parseBody = (req, options) => {
 
     if (req.headers['content-length'] > options.maxBodySize) {
       if (typeof body !== 'string') {
-        body = JSON.stringify(body)
+        body = stringify(body)
       }
       body = `${body.slice(0, options.maxBodySize - 3)}...`
     }
