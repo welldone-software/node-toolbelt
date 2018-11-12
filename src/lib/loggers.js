@@ -79,7 +79,7 @@ const requestSerializer = (options = {}, req) =>
     )
     : req)
 
-const getUseLevel = (res, err) => {
+const customLogLevel = (res, err) => {
   if (res.statusCode >= 400 && res.statusCode < 500) {
     return 'warn'
   } else if (res.statusCode >= 500 || err) {
@@ -106,7 +106,7 @@ const serializers = (options = {}) => {
 
 const logger = pino({serializers: serializers()})
 const expressLogger = options =>
-  expressPino({logger, serializers: serializers(options), getUseLevel})
+  expressPino({logger, serializers: serializers(options), customLogLevel})
 
 module.exports = {
   logger,

@@ -28,10 +28,10 @@
     "json-stringify-safe": "^5.0.1",
     "jsonwebtoken": "^8.1.1",
     "lodash": "^4.17.10",
-    "pino": "^4.10.2",
-    "pino-http": "git+https://github.com/welldone-software/pino-http.git",
+    "pino": "^5.8.0",
+    "pino-http": "^4.1.0",
     "standard-http-error": "^2.0.1",
-    "url-parse": "^1.4.1"
+    "url-parse": "^1.4.4"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
